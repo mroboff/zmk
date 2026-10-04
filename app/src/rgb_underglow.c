@@ -325,7 +325,12 @@ static int zmk_rgb_underglow_init(void) {
     state.on = zmk_usb_is_powered();
 #endif
 
-    if (state.on) {
+#if IS_ENABLED(UNDERGLOW_LAYER_ENABLED)
+    // Start in the per-key layer effect when it is the configured start effect.
+    state.layer_enabled = state.on && state.current_effect == UNDERGLOW_EFFECT_LAYER_INDICATORS;
+#endif
+
+    if (state.on && !state.layer_enabled) {
         k_timer_start(&underglow_tick, K_NO_WAIT, K_MSEC(50));
     }
 #if IS_ENABLED(UNDERGLOW_LAYER_ENABLED)
